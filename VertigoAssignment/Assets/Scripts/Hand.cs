@@ -19,8 +19,8 @@ public class Hand : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
   {
-	
-	}
+
+  }
 
   // use our equipped item, if any item is equipped
   public void UseEquipped()
@@ -33,8 +33,23 @@ public class Hand : MonoBehaviour {
 
   public void EquipItem(Equipable a_item)
   {
-    // if we already have an item equipped, drop it and equip the new item
     m_equipedItem = a_item;
+    m_equipedItem.transform.SetParent(transform);
+    m_equipedItem.PickUpItem();
+  }
+
+  public void DropItem()
+  {
+    if (m_equipedItem)
+    {
+      m_equipedItem.DropItem();
+      m_equipedItem = null;
+    }
+  }
+
+  public bool HasItemEquipped()
+  {
+    return m_equipedItem != null;
   }
 
   //public variables

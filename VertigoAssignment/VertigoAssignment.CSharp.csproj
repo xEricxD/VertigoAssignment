@@ -75,8 +75,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Equipable.cs" />
     <Compile Include="Assets\Scripts\Hand.cs" />
+    <Compile Include="Assets\Scripts\Items\Equipable.cs" />
+    <Compile Include="Assets\Scripts\Items\FlashLight.cs" />
     <Compile Include="Assets\Scripts\PlayerHands.cs" />
   </ItemGroup>
   <ItemGroup>
