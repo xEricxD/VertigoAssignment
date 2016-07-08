@@ -25,6 +25,10 @@ public class PlayerHands : MonoBehaviour {
         Debug.Log("right hand found, playerhand.cs");
       }
     }
+
+    // set other hand in both hands
+    m_leftHand.otherHand = m_rightHand;
+    m_rightHand.otherHand = m_leftHand;
 	}
 	
 	// Update is called once per frame
@@ -36,10 +40,18 @@ public class PlayerHands : MonoBehaviour {
     // if we left click, use our left hand
     if (Input.GetMouseButtonDown(0))
       UseHand(m_leftHand);
+    if (Input.GetMouseButton(0))
+      UseHandContinious(m_leftHand);
+    if (Input.GetMouseButtonUp(0))
+      StopUseHand(m_leftHand);
     
     // if righ click, use our right hand
     if (Input.GetMouseButtonDown(1))
       UseHand(m_rightHand);
+    if (Input.GetMouseButton(1))
+      UseHandContinious(m_rightHand);
+    if (Input.GetMouseButtonUp(1))
+      StopUseHand(m_rightHand);
 	}
 
   void UseHand(Hand a_hand)
@@ -50,6 +62,16 @@ public class PlayerHands : MonoBehaviour {
     // if we are looking at something, try to pick it up
     else
       PickupEquipable(a_hand);
+  }
+
+  void UseHandContinious(Hand a_hand)
+  {
+    a_hand.UseEquippedContinious();
+  }
+
+  void StopUseHand(Hand a_hand)
+  {
+    a_hand.StopUseEquipped();
   }
 
   void FindLookatItem()

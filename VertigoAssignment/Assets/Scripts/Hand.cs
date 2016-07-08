@@ -31,9 +31,26 @@ public class Hand : MonoBehaviour {
     }
   }
 
+  public void UseEquippedContinious()
+  {
+    if (m_equipedItem)
+    {
+      m_equipedItem.ActivateItemContinious();
+    }
+  }
+
+  public void StopUseEquipped()
+  {
+    if (m_equipedItem)
+    {
+      m_equipedItem.StopActivateItem();
+    }
+  }
+
   public void EquipItem(Equipable a_item)
   {
     m_equipedItem = a_item;
+    m_equipedItem.holdingHand = this;
     m_equipedItem.transform.SetParent(transform);
     m_equipedItem.PickUpItem();
   }
@@ -43,6 +60,7 @@ public class Hand : MonoBehaviour {
     if (m_equipedItem)
     {
       m_equipedItem.DropItem();
+      m_equipedItem.holdingHand = null;
       m_equipedItem = null;
     }
   }
@@ -52,8 +70,14 @@ public class Hand : MonoBehaviour {
     return m_equipedItem != null;
   }
 
+  public Equipable GetEquippedItem()
+  {
+    return m_equipedItem;
+  }
+
   //public variables
   public HandType type;
+  public Hand otherHand;
 
   //member variables
   Equipable m_equipedItem;

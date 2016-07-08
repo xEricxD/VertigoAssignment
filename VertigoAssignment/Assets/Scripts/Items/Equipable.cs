@@ -44,8 +44,20 @@ public class Equipable : MonoBehaviour {
       col.enabled = true;
   }
 
-  // when activating a held item, call this function
+  // called when clicking the mouse
   public virtual void ActivateItem()
+  {
+
+  }
+
+  // called when holding the mouse down
+  public virtual void ActivateItemContinious()
+  {
+
+  }
+
+  // called when we release the mouse
+  public virtual void StopActivateItem()
   {
 
   }
@@ -53,4 +65,5 @@ public class Equipable : MonoBehaviour {
   // public variables
   public bool isPickedUp;
   public string itemName;
+  public Hand holdingHand;
 }
