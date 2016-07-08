@@ -18,7 +18,9 @@ public class Ammo : Equipable
 
   public void Consume()
   {
+    // release the item from our hand (to make sure we can pickup a new item)
     holdingHand.DropItem();
+    // destroy the ammo pack
     Destroy(gameObject);
   }
 }

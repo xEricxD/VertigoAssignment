@@ -10,7 +10,8 @@ public class Equipable : MonoBehaviour {
   }
 
   // Update is called once per frame
-  void Update() {
+  void Update()
+  {
 
   }
 
@@ -20,7 +21,7 @@ public class Equipable : MonoBehaviour {
     // disable gravity
     GetComponentInChildren<Rigidbody>().isKinematic = true;
     GetComponentInChildren<Rigidbody>().useGravity = false;
-    // set item to be child of hand, and reset local position
+    // reset local position, so the item is placed at the same position as its parent
     transform.localPosition = Vector3.zero;
     transform.localRotation = Quaternion.Euler(0, 0, 0);
 
@@ -56,7 +57,7 @@ public class Equipable : MonoBehaviour {
 
   }
 
-  // called when we release the mouse
+  // called when releasing the mouse
   public virtual void StopActivateItem()
   {
 

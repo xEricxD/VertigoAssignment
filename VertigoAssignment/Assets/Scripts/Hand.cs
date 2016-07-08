@@ -31,6 +31,7 @@ public class Hand : MonoBehaviour {
     }
   }
 
+  // used for continious frame calls (e.g. auto fire on gun)
   public void UseEquippedContinious()
   {
     if (m_equipedItem)
@@ -38,7 +39,7 @@ public class Hand : MonoBehaviour {
       m_equipedItem.ActivateItemContinious();
     }
   }
-
+  // used to reset variables when we stop activating the item
   public void StopUseEquipped()
   {
     if (m_equipedItem)
@@ -46,7 +47,7 @@ public class Hand : MonoBehaviour {
       m_equipedItem.StopActivateItem();
     }
   }
-
+  // called when we pickup a new item
   public void EquipItem(Equipable a_item)
   {
     m_equipedItem = a_item;
@@ -54,7 +55,7 @@ public class Hand : MonoBehaviour {
     m_equipedItem.transform.SetParent(transform);
     m_equipedItem.PickUpItem();
   }
-
+  // called when we drop an item ( picking up a new item will drop the current one)
   public void DropItem()
   {
     if (m_equipedItem)
@@ -66,7 +67,6 @@ public class Hand : MonoBehaviour {
   }
 
   public bool HasItemEquipped() { return m_equipedItem != null; }
-
   public Equipable GetEquippedItem() { return m_equipedItem; }
 
   //public variables

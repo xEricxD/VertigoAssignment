@@ -26,7 +26,7 @@ public class PlayerBody : MonoBehaviour {
     head = gameObject.GetComponentInChildren<Head>();
     head.playerBody = this;
 
-    // and find the text for UI
+    // find the text for UI
     m_text = GameObject.FindGameObjectWithTag("ItemText").GetComponent<Text>();
 
     // set other hand in both hands
@@ -71,11 +71,13 @@ public class PlayerBody : MonoBehaviour {
       PickupEquipable(a_hand);
   }
 
+  // called when holding down the mouse button
   void UseHandContinious(Hand a_hand)
   {
     a_hand.UseEquippedContinious();
   }
 
+  // called when releasing the mouse button
   void StopUseHand(Hand a_hand)
   {
     a_hand.StopUseEquipped();
@@ -97,6 +99,7 @@ public class PlayerBody : MonoBehaviour {
       {
         m_lookatItem = hitInfo.collider.gameObject;
         Equipable eq = m_lookatItem.GetComponent<Equipable>();
+        // set the text in our screen, notifing what were looking at
         m_text.text = "pick up " + eq.itemName;
       }
     }

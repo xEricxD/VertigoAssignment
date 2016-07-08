@@ -21,37 +21,32 @@ public class Gun : Equipable
 	void Start ()
   {
     m_currentClipSize = m_totalClipSize;
-    m_state = GunState.READY_TO_FIRE;
     m_currentReloadTime = m_currentShotTime = 0;
+    m_state = GunState.READY_TO_FIRE;
+    m_fireMode = FireMode.FULL_AUTO;
 
     // find our audio source
     m_gunAudio = GetComponent<AudioSource>();
 
-    // Set particle systems
+    // Set particle systems variables
     fireParticle.loop = false;
     smokeParticle.loop = false;
-
-    m_fireMode = FireMode.FULL_AUTO;
   }
 	
 	// Update is called once per frame
 	void Update ()
   {
-    switch (m_state)
-    {
-      case (GunState.RELOADING):
-        // update reload time, and finish reloading when the the time passes the total reload time
-        m_currentReloadTime += Time.deltaTime;
-        if (m_currentReloadTime >= m_reloadTime)
-        {
-          m_state = GunState.READY_TO_FIRE;
-          m_currentClipSize = m_totalClipSize;
-          m_currentReloadTime = 0;
-        }
-        break;
-        
-      default:
-        break;
+    // check if we're reloading, and if so update the reload time
+    if (m_state == GunState.RELOADING)
+    {        
+      // update reload time, and finish reloading when the the time passes the total reload time
+      m_currentReloadTime += Time.deltaTime;
+      if (m_currentReloadTime >= m_reloadTime)
+      {
+        m_state = GunState.READY_TO_FIRE;
+        m_currentClipSize = m_totalClipSize;
+        m_currentReloadTime = 0;
+      }
     }
 
     // check if we want to switch fire mode
@@ -70,11 +65,10 @@ public class Gun : Equipable
   {
     base.ActivateItem();
 
-    // test if we have any bullets left in our clip
     switch (m_state)
     {
       case GunState.READY_TO_FIRE:
-        // make sure we are actually ready to fire
+        // make sure we have bullets left in our clip before trying to fire
         if (m_currentClipSize > 0)
         {
           // fire a single shot on semi-auto
@@ -166,6 +160,7 @@ public class Gun : Equipable
         }
         break;
 
+      // if full auto, once we reload the state will switch to ready to fire. Checking the state here will make sure you dont have to release the mouse button to continue firing
       case GunState.READY_TO_FIRE:
         // make sure we are actually ready to fire
         if (m_currentClipSize > 0)
@@ -180,24 +175,25 @@ public class Gun : Equipable
   {
     base.StopActivateItem();
 
-    // stop firing the gun
+    // stop firing the gun if we were
     if (m_state == GunState.FIRING)
     {
       m_state = GunState.READY_TO_FIRE;
     }
   }
 
+  // fire a single shot from our gun
   void Fire()
   {
     // play the sound and particle
     m_gunAudio.PlayOneShot(fireSound);
     fireParticle.Play();
 
-    // fire a ray in front of us, and check if we hit anything. If so, play a small particle to show the impact point
+    // fire a ray in front of us, and check if we hit anything
     RaycastHit hitInfo;
     if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitInfo, 1000))
     {
-      // show a smoke particle at our impact point
+      // move impact particle to our impact point and play it
       smokeParticle.transform.position = hitInfo.point;
       smokeParticle.Play();
     }

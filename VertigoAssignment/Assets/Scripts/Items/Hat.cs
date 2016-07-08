@@ -18,7 +18,7 @@ public class Hat : Equipable
   public override void ActivateItem()
   {
     base.ActivateItem();
-
+    // equip the hat on our head
     holdingHand.playerBody.head.EquipItem(this, holdingHand);
   }
 }

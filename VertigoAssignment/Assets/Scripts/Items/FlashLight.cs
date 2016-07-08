@@ -6,9 +6,9 @@ public class FlashLight : Equipable
 	// Use this for initialization
 	void Start ()
   {
+    // find the light and audio source
     m_light = gameObject.GetComponentInChildren<Light>();
     m_audio = GetComponent<AudioSource>();
-
   }
 	
 	// Update is called once per frame
@@ -22,22 +22,11 @@ public class FlashLight : Equipable
   {
     base.ActivateItem();
 
+    // play clicking sound
     m_audio.Play();
     //switch the light on / off
     if (m_light)
       m_light.enabled = !m_light.enabled;
-  }
-
-  public override void PickUpItem()
-  {
-    base.PickUpItem();
-
-  }
-
-  public override void DropItem()
-  {
-    base.DropItem();
-
   }
 
   // member variables
