@@ -11,6 +11,12 @@ public class Gun : Equipable
     RELOADING
   }
 
+  enum FireMode : byte
+  {
+    SEMI_AUTO = 0,
+    FULL_AUTO
+  }
+
 	// Use this for initialization
 	void Start ()
   {
@@ -21,13 +27,11 @@ public class Gun : Equipable
     // find our audio source
     m_gunAudio = GetComponent<AudioSource>();
 
-    // Set impact particle to not emit anything when not firing
-    smokeParticle.Play();
-    ParticleSystem.EmissionModule em = smokeParticle.emission;
-    ParticleSystem.MinMaxCurve rate = em.rate;
-    rate.constantMin = 0;
-    rate.constantMax = 0;
-    em.rate = rate;
+    // Set particle systems
+    fireParticle.loop = false;
+    smokeParticle.loop = false;
+
+    m_fireMode = FireMode.FULL_AUTO;
   }
 	
 	// Update is called once per frame
@@ -49,6 +53,16 @@ public class Gun : Equipable
       default:
         break;
     }
+
+    // check if we want to switch fire mode
+    if (isPickedUp)
+    {
+      if (Input.GetKeyDown(KeyCode.F))
+      {
+        m_fireMode = (m_fireMode == FireMode.FULL_AUTO) ? FireMode.SEMI_AUTO : FireMode.FULL_AUTO;
+        m_gunAudio.PlayOneShot(switchModeSound);
+      }
+    }
 	}
 
   // will be called when the item is used
@@ -63,11 +77,37 @@ public class Gun : Equipable
         // make sure we are actually ready to fire
         if (m_currentClipSize > 0)
         {
-          m_state = GunState.FIRING;
-          fireParticle.Play();
+          // fire a single shot on semi-auto
+          if (m_fireMode == FireMode.SEMI_AUTO)
+            Fire();
+          // or set the state to firing for full-auto
+          else
+            m_state = GunState.FIRING;
         }
         else
           m_state = GunState.OUT_OF_AMMO;
+        break;
+      
+      // if we run out of ammo on a semi-auto shot, make sure to check if we can reload
+      case (GunState.OUT_OF_AMMO):
+        if (holdingHand.otherHand.HasItemEquipped())
+        {
+          // check if we're holding ammo in our other hand, which we can use to reload our gun
+          Ammo ammo = holdingHand.otherHand.GetEquippedItem() as Ammo;
+          if (ammo)
+          {
+            // if so, reload the gun and consume the ammo
+            m_gunAudio.PlayOneShot(reloadSound);
+            ammo.Consume();
+            m_state = GunState.RELOADING;
+          }
+        }
+        // if we didnt switch states, it means we dont have ammo in hand, so play out of ammo sound
+        if (m_state == GunState.OUT_OF_AMMO)
+        {
+          if (!m_gunAudio.isPlaying)
+            m_gunAudio.PlayOneShot(emptySound);
+        }
         break;
     }
   }
@@ -75,6 +115,10 @@ public class Gun : Equipable
   public override void ActivateItemContinious()
   {
     base.ActivateItemContinious();
+
+    // if we're not on full auto, holding down the mouse won't do anything, so return
+    if (m_fireMode != FireMode.FULL_AUTO)
+      return;
 
     switch (m_state)
     {
@@ -97,8 +141,6 @@ public class Gun : Equipable
         else
         {
           // if there's no bullets left, switch states
-          fireParticle.Stop();
-          SetSmokeParticleEmissionRate(0);
           m_state = GunState.OUT_OF_AMMO;
         }
         break;
@@ -127,10 +169,7 @@ public class Gun : Equipable
       case GunState.READY_TO_FIRE:
         // make sure we are actually ready to fire
         if (m_currentClipSize > 0)
-        {
           m_state = GunState.FIRING;
-          fireParticle.Play();
-        }
         else
           m_state = GunState.OUT_OF_AMMO;
         break;
@@ -144,63 +183,34 @@ public class Gun : Equipable
     // stop firing the gun
     if (m_state == GunState.FIRING)
     {
-      fireParticle.Stop();
-      // reset the smoke particle
-      SetSmokeParticleEmissionRate(0);
-
       m_state = GunState.READY_TO_FIRE;
     }
   }
 
-  public override void PickUpItem()
-  {
-    base.PickUpItem();
-
-  }
-
-  public override void DropItem()
-  {
-    base.DropItem();
-
-  }
-
   void Fire()
   {
+    // play the sound and particle
     m_gunAudio.PlayOneShot(fireSound);
+    fireParticle.Play();
 
     // fire a ray in front of us, and check if we hit anything. If so, play a small particle to show the impact point
     RaycastHit hitInfo;
-
-    Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward, Color.red);
-    
     if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitInfo, 1000))
     {
+      // show a smoke particle at our impact point
       smokeParticle.transform.position = hitInfo.point;
-      SetSmokeParticleEmissionRate(10);
-    }
-    else
-    {
-      // dont show any smoke
-      SetSmokeParticleEmissionRate(0);
+      smokeParticle.Play();
     }
 
     // reduce clipsize by 1
     m_currentClipSize -= 1;
   }
 
-  void SetSmokeParticleEmissionRate(int a_rate)
-  {
-    ParticleSystem.EmissionModule em = smokeParticle.emission;
-    ParticleSystem.MinMaxCurve rate = em.rate;
-    rate.constantMin = a_rate;
-    rate.constantMax = a_rate;
-    em.rate = rate;
-  }
-
   // public variables
   public AudioClip fireSound;
   public AudioClip emptySound;
   public AudioClip reloadSound;
+  public AudioClip switchModeSound;
   public ParticleSystem fireParticle;
   public ParticleSystem smokeParticle;
 
@@ -215,5 +225,6 @@ public class Gun : Equipable
   float m_currentReloadTime;
   float m_currentShotTime;
   GunState m_state;
+  FireMode m_fireMode;
   AudioSource m_gunAudio;
 }
