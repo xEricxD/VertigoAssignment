@@ -2,33 +2,40 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class PlayerHands : MonoBehaviour {
+public class PlayerBody : MonoBehaviour {
   
 	// Use this for initialization
 	void Start ()
   {
-    // start by setting both hands
+    // start by finding all body parts
     Hand [] hands = gameObject.GetComponentsInChildren<Hand>();
-    // and find the text for UI
-    m_text = GameObject.FindGameObjectWithTag("ItemText").GetComponent<Text>();
-
     foreach (Hand hand in hands )
     {
       if (hand.type == Hand.HandType.LEFT)
       {
-        m_leftHand = hand;
+        leftHand = hand;
         Debug.Log("left hand found, playerhand.cs");
       }
       else if (hand.type == Hand.HandType.RIGHT)
       {
-        m_rightHand = hand;
+        rightHand = hand;
         Debug.Log("right hand found, playerhand.cs");
       }
     }
 
+    head = gameObject.GetComponentInChildren<Head>();
+    head.playerBody = this;
+
+    // and find the text for UI
+    m_text = GameObject.FindGameObjectWithTag("ItemText").GetComponent<Text>();
+
     // set other hand in both hands
-    m_leftHand.otherHand = m_rightHand;
-    m_rightHand.otherHand = m_leftHand;
+    leftHand.otherHand = rightHand;
+    rightHand.otherHand = leftHand;
+
+    // set owning body
+    leftHand.playerBody = this;
+    rightHand.playerBody = this;
 	}
 	
 	// Update is called once per frame
@@ -39,19 +46,19 @@ public class PlayerHands : MonoBehaviour {
 
     // if we left click, use our left hand
     if (Input.GetMouseButtonDown(0))
-      UseHand(m_leftHand);
+      UseHand(leftHand);
     if (Input.GetMouseButton(0))
-      UseHandContinious(m_leftHand);
+      UseHandContinious(leftHand);
     if (Input.GetMouseButtonUp(0))
-      StopUseHand(m_leftHand);
+      StopUseHand(leftHand);
     
     // if righ click, use our right hand
     if (Input.GetMouseButtonDown(1))
-      UseHand(m_rightHand);
+      UseHand(rightHand);
     if (Input.GetMouseButton(1))
-      UseHandContinious(m_rightHand);
+      UseHandContinious(rightHand);
     if (Input.GetMouseButtonUp(1))
-      StopUseHand(m_rightHand);
+      StopUseHand(rightHand);
 	}
 
   void UseHand(Hand a_hand)
@@ -112,10 +119,13 @@ public class PlayerHands : MonoBehaviour {
   {
     a_hand.UseEquipped();
   }
-  
+
+  // public variables
+  public Hand leftHand;
+  public Hand rightHand;
+  public Head head;
+
   // member variables
-  Hand m_leftHand;
-  Hand m_rightHand;
   GameObject m_lookatItem;
   Text m_text;
 }

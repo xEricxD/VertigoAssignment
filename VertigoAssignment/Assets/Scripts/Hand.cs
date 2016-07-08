@@ -65,19 +65,14 @@ public class Hand : MonoBehaviour {
     }
   }
 
-  public bool HasItemEquipped()
-  {
-    return m_equipedItem != null;
-  }
+  public bool HasItemEquipped() { return m_equipedItem != null; }
 
-  public Equipable GetEquippedItem()
-  {
-    return m_equipedItem;
-  }
+  public Equipable GetEquippedItem() { return m_equipedItem; }
 
   //public variables
   public HandType type;
   public Hand otherHand;
+  public PlayerBody playerBody;
 
   //member variables
   Equipable m_equipedItem;

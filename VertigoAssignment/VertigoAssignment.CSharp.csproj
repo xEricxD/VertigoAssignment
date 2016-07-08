@@ -70,11 +70,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Hand.cs" />
+    <Compile Include="Assets\Scripts\Head.cs" />
     <Compile Include="Assets\Scripts\Items\Ammo.cs" />
     <Compile Include="Assets\Scripts\Items\Equipable.cs" />
     <Compile Include="Assets\Scripts\Items\FlashLight.cs" />
     <Compile Include="Assets\Scripts\Items\Gun.cs" />
-    <Compile Include="Assets\Scripts\PlayerHands.cs" />
+    <Compile Include="Assets\Scripts\Items\Hat.cs" />
+    <Compile Include="Assets\Scripts\PlayerBody.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\ProjectSettings\ProjectVersion.txt" />
