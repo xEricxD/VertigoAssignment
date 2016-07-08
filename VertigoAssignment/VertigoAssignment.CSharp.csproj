@@ -76,6 +76,7 @@
     <Compile Include="Assets\Scripts\Items\FlashLight.cs" />
     <Compile Include="Assets\Scripts\Items\Gun.cs" />
     <Compile Include="Assets\Scripts\Items\Hat.cs" />
+    <Compile Include="Assets\Scripts\Items\Rock.cs" />
     <Compile Include="Assets\Scripts\PlayerBody.cs" />
   </ItemGroup>
   <ItemGroup>
